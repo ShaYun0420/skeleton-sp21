@@ -118,31 +118,21 @@ public class Model extends Observable {
         board.setViewingPerspective(side);  // 切换视角
 
         for (int col = 0; col < size(); ++col) {
-            // 从 tile(col, row + 1) 遍历至 tile(col, size() - 1)
-                // 若为空则跳过
-                // 若非空则判断 cursor_tile 与 cur_tile 的值
-                    // 若 cursor_tile.value() != cur_tile.value() 则 cur_tile 移动至 (col, cursor - 1)
-                    // 若 cursor_tile.value() == cur_tile.value() 则
-                    // 判断 cursor_tile 是否合并过
-                        // 若 cursor_tile 合并过则 cur_tile 移动至 (col, cursor - 1)
-                        // 若 cursor_tile 没有合并过则 cur_tile 移动至 (col, cursor)
-                            // 合并后更新 score 和 changed
+
             // 记录每一行的 tile 是否合并过
             boolean[] hasMerged = new boolean[size()];
             Arrays.fill(hasMerged, false);
 
             for (int row = size() - 2; row >= 0; --row) {
                 Tile cur_tile = tile(col, row);  // 获取当前 tile(col, row)
-                if (cur_tile == null)  // 若为空则跳过
+                if (cur_tile == null)
                     continue;
-
                 // 向上寻找首个非空 tile
-                int cursor;
+                int cursor = 0;
                 for (cursor = row + 1; cursor < size(); ++cursor) {
                     Tile cursor_tile = tile(col, cursor);
                     if (cursor_tile == null)
                         continue;
-
                     // 若非空则判断 cursor_tile 与 cur_tile 的值
                     if (cursor_tile.value() == cur_tile.value()) {
                         // 判断是否合并过
@@ -162,11 +152,10 @@ public class Model extends Observable {
                     // 至此，已经找到首个非空的 tile 并进行了相关操作
                     break;
                 }
-
                 // 若 cur_tile 上方全为空
-                if (tile(col, cursor) == null) {
-                    board.move(col, cursor, cur_tile);
-                    changed = rowChange(row, cursor);
+                if (cursor == size()) {
+                    board.move(col, cursor - 1, cur_tile);
+                    changed = rowChange(row, cursor - 1);
                 }
             }
         }
@@ -202,18 +191,10 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
-        // 遍历 b 上的每个 tile 若 tile 为 null 表示该位置为空
-//        Iterator<Tile> iter = b.iterator();
         for (Tile t : b) {
             if (t == null)
                 return true;
         }
-//        for (int row = 0; row < b.size(); ++row) {
-//            for (int col = 0; col < b.size(); ++col) {
-//                if (b.tile(col, row) == null)
-//                    return true;
-//            }
-//        }
         return false;
     }
 
