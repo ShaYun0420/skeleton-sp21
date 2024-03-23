@@ -34,7 +34,7 @@ public class Board implements Iterable<Tile> {
         viewPerspective = Side.NORTH;
         for (int col = 0; col < size; col += 1) {
             for (int row = 0; row < size; row += 1) {
-                int value = rawValues[size - 1 - row][col];
+                int value = rawValues[size - 1 - row][col];  // (0, 0) correspond to the left-bottom corner
                 Tile tile;
                 if (value == 0) {
                     tile = null;
@@ -88,16 +88,21 @@ public class Board implements Iterable<Tile> {
     public boolean move(int col, int row, Tile tile) {
         int pcol = viewPerspective.col(col, row, size()),
                 prow = viewPerspective.row(col, row, size());
+        // 若 tile 已经在 (col, row) 则无需移动
         if (tile.col() == pcol && tile.row() == prow) {
             return false;
         }
+        // 获取目标位置 (col, row) 的 tile 对象 tile1
         Tile tile1 = vtile(col, row, viewPerspective);
+        // 将 tile 从原位置删除
         values[tile.col()][tile.row()] = null;
 
+        // 若目标位置为空则直接移动
         if (tile1 == null) {
             values[pcol][prow] = tile.move(pcol, prow);
             return false;
         } else {
+            // 目标位置不为空，将 tile 与 tile1 合并
             values[pcol][prow] = tile.merge(pcol, prow, tile1);
             return true;
         }

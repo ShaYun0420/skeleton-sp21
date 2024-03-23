@@ -1,6 +1,8 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.Observable;
 
 
@@ -113,12 +115,74 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);  // 切换视角
+
+        for (int col = 0; col < size(); ++col) {
+            // 从 tile(col, row + 1) 遍历至 tile(col, size() - 1)
+                // 若为空则跳过
+                // 若非空则判断 cursor_tile 与 cur_tile 的值
+                    // 若 cursor_tile.value() != cur_tile.value() 则 cur_tile 移动至 (col, cursor - 1)
+                    // 若 cursor_tile.value() == cur_tile.value() 则
+                    // 判断 cursor_tile 是否合并过
+                        // 若 cursor_tile 合并过则 cur_tile 移动至 (col, cursor - 1)
+                        // 若 cursor_tile 没有合并过则 cur_tile 移动至 (col, cursor)
+                            // 合并后更新 score 和 changed
+            // 记录每一行的 tile 是否合并过
+            boolean[] hasMerged = new boolean[size()];
+            Arrays.fill(hasMerged, false);
+
+            for (int row = size() - 2; row >= 0; --row) {
+                Tile cur_tile = tile(col, row);  // 获取当前 tile(col, row)
+                if (cur_tile == null)  // 若为空则跳过
+                    continue;
+
+                // 向上寻找首个非空 tile
+                int cursor;
+                for (cursor = row + 1; cursor < size(); ++cursor) {
+                    Tile cursor_tile = tile(col, cursor);
+                    if (cursor_tile == null)
+                        continue;
+
+                    // 若非空则判断 cursor_tile 与 cur_tile 的值
+                    if (cursor_tile.value() == cur_tile.value()) {
+                        // 判断是否合并过
+                        if (hasMerged[cursor]) {                        // 不合并，移动至 (col, cursor - 1)
+                            board.move(col, cursor - 1, cur_tile);
+                            changed = rowChange(row, cursor - 1);
+                        } else {                                        // 合并至 (col, cursor)
+                            board.move(col, cursor, cur_tile);
+                            hasMerged[cursor] = true;
+                            score += tile(col, cursor).value();
+                            changed = rowChange(row, cursor);
+                        }
+                    } else {                                            // 只移动不合并
+                        board.move(col, cursor - 1, cur_tile);
+                        changed = rowChange(row, cursor - 1);
+                    }
+                    // 至此，已经找到首个非空的 tile 并进行了相关操作
+                    break;
+                }
+
+                // 若 cur_tile 上方全为空
+                if (tile(col, cursor) == null) {
+                    board.move(col, cursor, cur_tile);
+                    changed = rowChange(row, cursor);
+                }
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);  // 切换为标准视角
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /** Checks if rows of one tile is equal to another. */
+    private boolean rowChange(int row1, int row2) {
+        return row1 != row2;
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -138,6 +202,18 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        // 遍历 b 上的每个 tile 若 tile 为 null 表示该位置为空
+//        Iterator<Tile> iter = b.iterator();
+        for (Tile t : b) {
+            if (t == null)
+                return true;
+        }
+//        for (int row = 0; row < b.size(); ++row) {
+//            for (int col = 0; col < b.size(); ++col) {
+//                if (b.tile(col, row) == null)
+//                    return true;
+//            }
+//        }
         return false;
     }
 
@@ -148,6 +224,10 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (Tile t : b) {
+            if (t != null && t.value() == MAX_PIECE)
+                return true;
+        }
         return false;
     }
 
@@ -159,6 +239,35 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b))
+            return true;
+        for (int row = 0; row < b.size(); ++row) {
+            for (int col = 0; col < b.size(); ++col) {
+                Tile cur = b.tile(col, row);  // 当前 tile
+
+                // 获取 tile 的四个方位的邻居, 若邻居节点的 col 和 row 坐标均不越界则为有效邻居
+                if (col - 1 >= 0) {
+                    Tile left = b.tile(col - 1, row);
+                    if (cur.value() == left.value())
+                        return true;
+                }
+                if (col + 1 < b.size()) {
+                    Tile right = b.tile(col + 1, row);
+                    if (cur.value() == right.value())
+                        return true;
+                }
+                if (row + 1 < b.size()) {
+                    Tile above = b.tile(col, row + 1);
+                    if (cur.value() == above.value())
+                        return true;
+                }
+                if (row - 1 >= 0) {
+                    Tile below = b.tile(col, row - 1);
+                    if (cur.value() == below.value())
+                        return true;
+                }
+            }
+        }
         return false;
     }
 
