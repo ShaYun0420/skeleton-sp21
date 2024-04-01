@@ -9,7 +9,7 @@ import java.util.Iterator;
     front always points at the first element.
     back always points at the position behind the last element.
  */
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     private T[] items;
     private int size;
@@ -19,6 +19,21 @@ public class ArrayDeque<T> {
 
     /** point at the position just behind the last element in items. */
     private int back;
+
+    /** Get the items from outside the class. */
+    public T[] getItems() {
+        return items;
+    }
+
+    /** Get front. */
+    public int getFront() {
+        return front;
+    }
+
+    /** Get back. */
+    public int getBack() {
+        return back;
+    }
 
     /** Create an empty deque. */
     public ArrayDeque() {
@@ -48,6 +63,7 @@ public class ArrayDeque<T> {
 
     /**  Adds an item of type T to the front of the deque.
      * You can assume that item is never null. */
+    @Override
     public void addFirst(T item) {
         if (size == items.length)
             resize(size * 2);
@@ -65,6 +81,7 @@ public class ArrayDeque<T> {
 
     /** Adds an item of type T to the back of the deque.
      * You can assume that item is never null. */
+    @Override
     public void addLast(T item) {
         if (size == items.length)
             resize(size * 2);
@@ -76,6 +93,7 @@ public class ArrayDeque<T> {
 
     /** Prints the items in the deque from first to last, separated by a space.
      * Once all the items have been printed, print out a new line. */
+    @Override
     public void printDeque() {
         for (int i = front; i != back; i = (i + 1) % items.length) {
             int next = (i + 1) % items.length;
@@ -93,6 +111,7 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the front of the deque.
      * If no such item exists, returns null. */
+    @Override
     public T removeFirst() {
         if (isEmpty())
             return null;
@@ -112,6 +131,7 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the back of the deque.
      * If no such item exists, returns null. */
+    @Override
     public T removeLast() {
         if (isEmpty())
             return null;
@@ -131,6 +151,7 @@ public class ArrayDeque<T> {
 
     /** Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
      * If no such item exists, returns null. Must not alter the deque! */
+    @Override
     public T get(int index) {
         if (isEmpty() || index > size() || index < 0)
             return null;
@@ -138,30 +159,53 @@ public class ArrayDeque<T> {
         return items[position];
     }
 
-    /** Returns true if deque is empty, false otherwise. */
-    public boolean isEmpty() {
-        return size() == 0;
-    }
+//    /** Returns true if deque is empty, false otherwise. */
+//    @Override
+//    public boolean isEmpty() {
+//        return size() == 0;
+//    }
 
     /** Returns the number of items in the deque. */
+    @Override
     public int size() {
         return size;
     }
 
     /** The Deque objects we’ll make are iterable (i.e. Iterable<T>)
      * so we must provide this method to return an iterator. */
-//    public Iterator<T> iterator() {
-//
-//    }
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayDequeIterator();
+    }
+
+    private class ArrayDequeIterator implements Iterator<T> {
+        private int p;
+
+        public ArrayDequeIterator() {
+            p = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return p < size;
+        }
+
+        @Override
+        public T next() {
+            return items[p++];
+        }
+    }
 
     /** Returns whether or not the parameter o is equal to the Deque.
      * o is considered equal if it is a Deque and if it contains the same contents
      * (as goverened by the generic T’s equals method) in the same order.
      * (ADDED 2/12: You’ll need to use the instance of keywords for this. */
     public boolean equals(Object o) {
+        if (o == null)
+            return false;
         if (!(o instanceof ArrayDeque))
             return false;
-        ArrayDeque<?> other = (ArrayDeque<?>) o;
+        ArrayDeque<T> other = (ArrayDeque<T>) o;
         if (this.size() != other.size()) {
             return false;
         }
