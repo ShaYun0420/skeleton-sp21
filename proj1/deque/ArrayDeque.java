@@ -49,6 +49,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             new_items[i] = items[oldIndex];
         }
         items = new_items;
+        back = size;
     }
 
     /** Get the position of next front. */
@@ -219,7 +220,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             return false;
         }
         for (int i = 0; i < size(); ++i) {
-            if (this.get(i) != other.get(i)) {
+            T o1 = this.get(i);
+            T o2 = other.get(i);
+            if (!o1.equals(o2)) {
                 return false;
             }
         }
