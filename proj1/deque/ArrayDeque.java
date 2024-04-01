@@ -65,8 +65,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * You can assume that item is never null. */
     @Override
     public void addFirst(T item) {
-        if (size == items.length)
+        if (size == items.length) {
             resize(size * 2);
+        }
 
         if (isEmpty()) {
             items[front] = item;
@@ -83,8 +84,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * You can assume that item is never null. */
     @Override
     public void addLast(T item) {
-        if (size == items.length)
+        if (size == items.length) {
             resize(size * 2);
+        }
 
         items[back] = item;
         back = getNextBack(back);
@@ -97,10 +99,12 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     public void printDeque() {
         for (int i = front; i != back; i = (i + 1) % items.length) {
             int next = (i + 1) % items.length;
-            if (next != back)
+            if (next != back) {
                 System.out.print(items[i] + " ");
-            else
+            }
+            else {
                 System.out.println(items[i]);
+            }
         }
     }
 
@@ -113,8 +117,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * If no such item exists, returns null. */
     @Override
     public T removeFirst() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         T first = items[front];
         items[front] = null;
         --size;
@@ -133,8 +138,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * If no such item exists, returns null. */
     @Override
     public T removeLast() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         T last = items[back];
         items[back] = null;
         --size;
@@ -153,8 +159,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * If no such item exists, returns null. Must not alter the deque! */
     @Override
     public T get(int index) {
-        if (isEmpty() || index > size() || index < 0)
+        if (isEmpty() || index > size() || index < 0) {
             return null;
+        }
         int position = (front + index) % items.length;
         return items[position];
     }
@@ -201,10 +208,12 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * (as goverened by the generic T’s equals method) in the same order.
      * (ADDED 2/12: You’ll need to use the instance of keywords for this. */
     public boolean equals(Object o) {
-        if (o == null)
+        if (o == null) {
             return false;
-        if (!(o instanceof ArrayDeque))
+        }
+        if (!(o instanceof ArrayDeque)) {
             return false;
+        }
         ArrayDeque<T> other = (ArrayDeque<T>) o;
         if (this.size() != other.size()) {
             return false;
