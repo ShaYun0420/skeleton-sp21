@@ -211,23 +211,17 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         if (o == null) {
             return false;
         }
-        if (!(o instanceof ArrayDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
-        ArrayDeque<T> other = (ArrayDeque<T>) o;
-        if (this.size() != other.size()) {
+        Deque<T> other = (Deque<T>) o;
+        if (this.size() != ((Deque<T>) o).size()) {
             return false;
         }
-        int p1 = this.front;
-        int p2 = other.front;
-        int n1 = this.items.length;
-        int n2 = other.items.length;
-        while (p1 != this.back && p2 != other.back) {
-            if (this.items[p1] != other.items[p2]) {
+        for (int i = 0; i < size(); ++i) {
+            if (this.get(i) != other.get(i)) {
                 return false;
             }
-            p1 = (p1 + 1) % n1;
-            p2 = (p2 + 1) % n2;
         }
         return true;
     }

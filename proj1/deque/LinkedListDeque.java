@@ -1,6 +1,7 @@
 package deque;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -215,21 +216,17 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         if (o == null) {
             return false;
         }
-        if (!(o instanceof LinkedListDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
-        LinkedListDeque<T> other = (LinkedListDeque<T>) o;
-        if (this.size() != other.size()) {
+        Deque<T> other = (Deque<T>) o;
+        if (this.size() != ((Deque<T>) o).size()) {
             return false;
         }
-        ListNode p1 = this.sentinel.next;
-        ListNode p2 = other.sentinel.next;
-        while (p1 != this.sentinel && p2 != other.sentinel) {
-            if (p1.item != p2.item) {
+        for (int i = 0; i < size(); ++i) {
+            if (this.get(i) != other.get(i)) {
                 return false;
             }
-            p1 = p1.next;
-            p2 = p2.next;
         }
         return true;
     }
