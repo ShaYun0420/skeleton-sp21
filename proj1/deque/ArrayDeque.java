@@ -17,7 +17,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     /** point at the first element in items. */
     private int front;
 
-    /** point at the position just behind the last element in items. */
+    /** point at the last element in items. */
     private int back;
 
     /** Get the items from outside the class. */
@@ -49,7 +49,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             new_items[i] = items[oldIndex];
         }
         items = new_items;
-        back = size;
+        back = size - 1;
         front = 0;
     }
 
@@ -73,13 +73,12 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
         if (isEmpty()) {
             items[front] = item;
-            ++back;
         } else {
             int nextFront = getNextFront(front);
             items[nextFront] = item;
             front = nextFront;
         }
-        size += 1;
+        ++size;
     }
 
     /** Adds an item of type T to the back of the deque.
@@ -89,9 +88,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         if (size == items.length) {
             resize(size * 2);
         }
-
-        items[back] = item;
-        back = getNextBack(back);
+        if (isEmpty()) {
+            items[back] = item;
+        } else {
+            int nextBack = getNextBack(back);
+            items[nextBack] = item;
+            back = nextBack;
+        }
         ++size;
     }
 
