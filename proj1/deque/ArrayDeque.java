@@ -50,6 +50,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
         items = new_items;
         back = size;
+        front = 0;
     }
 
     /** Get the position of next front. */
