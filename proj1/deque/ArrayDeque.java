@@ -26,24 +26,24 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     }
 
     /** Resize the items when deque is full. */
-    public void resize(int capacity) {
-        T[] new_items = (T[]) new Object[capacity];
+    private void resize(int capacity) {
+        T[] newItems = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
             int oldIndex = (front + i) % items.length;
-            new_items[i] = items[oldIndex];
+            newItems[i] = items[oldIndex];
         }
-        items = new_items;
+        items = newItems;
         back = size - 1;
         front = 0;
     }
 
     /** Get the position of next front. */
-    private int getNextFront(int front) {
+    private int getNextFront() {
         return front - 1 >= 0 ? front - 1 : items.length - 1;
     }
 
     /** Get the position of next back. */
-    private int getNextBack(int back) {
+    private int getNextBack() {
         return back + 1 == items.length ? 0 : back + 1;
     }
 
@@ -58,7 +58,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         if (isEmpty()) {
             items[front] = item;
         } else {
-            int nextFront = getNextFront(front);
+            int nextFront = getNextFront();
             items[nextFront] = item;
             front = nextFront;
         }
@@ -75,7 +75,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         if (isEmpty()) {
             items[back] = item;
         } else {
-            int nextBack = getNextBack(back);
+            int nextBack = getNextBack();
             items[nextBack] = item;
             back = nextBack;
         }
@@ -90,8 +90,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             int next = (i + 1) % items.length;
             if (next != back) {
                 System.out.print(items[i] + " ");
-            }
-            else {
+            } else {
                 System.out.println(items[i]);
             }
         }
@@ -177,7 +176,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private class ArrayDequeIterator implements Iterator<T> {
         private int p;
 
-        public ArrayDequeIterator() {
+        ArrayDequeIterator() {
             p = 0;
         }
 
