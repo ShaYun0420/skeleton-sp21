@@ -21,6 +21,13 @@ public class MaxArrayDequeTest {
         }
     }
 
+    private class NumberComparator implements Comparator<Integer> {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return o1 - o2;
+        }
+    }
+
     @Test
     public void testCompare() {
         LengthComparator com = new LengthComparator();
@@ -41,5 +48,16 @@ public class MaxArrayDequeTest {
         int maxInt = madInt.max();
         Assert.assertEquals("CaiXvKun", maxString);
         Assert.assertEquals(29, maxInt);
+    }
+
+    @Test
+    public void largeArrayTest() {
+        NumberComparator numberComp = new NumberComparator();
+        MaxArrayDeque<Integer> mad = new MaxArrayDeque<>(numberComp);
+        for (int i = 0; i < 10000; ++i) {
+            mad.addFirst(i);
+        }
+        int maxNum = mad.max();
+        Assert.assertEquals("max doesn't work, expected: 9999 but got: " + maxNum, 9999, maxNum);
     }
 }

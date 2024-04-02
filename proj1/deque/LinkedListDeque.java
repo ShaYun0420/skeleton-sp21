@@ -7,9 +7,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
      * helper class: ListNode of LinkedListDeque.
      */
     private class ListNode {
-        public T item;
-        public ListNode next;
-        public ListNode pre;
+        private T item;
+        private ListNode next;
+        private ListNode pre;
 
         /**
          * Constructor of ListNode.

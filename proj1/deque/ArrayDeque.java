@@ -1,6 +1,5 @@
 package deque;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 /** add and remove must take constant time, except during resizing operations.
@@ -19,21 +18,6 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     /** point at the last element in items. */
     private int back;
-
-    /** Get the items from outside the class. */
-    public T[] getItems() {
-        return items;
-    }
-
-    /** Get front. */
-    public int getFront() {
-        return front;
-    }
-
-    /** Get back. */
-    public int getBack() {
-        return back;
-    }
 
     /** Create an empty deque. */
     public ArrayDeque() {
@@ -204,7 +188,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
         @Override
         public T next() {
-            return items[p++];
+            return get(p++);
         }
     }
 
